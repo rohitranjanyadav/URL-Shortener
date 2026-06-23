@@ -3,11 +3,25 @@ import { db } from "../db/index.js";
 import { usersTable } from "../models/user.model.js";
 import { eq } from "drizzle-orm";
 import { createHmac, randomBytes } from "crypto";
+import { signupPostRequestBodySchema } from "../validation/req.validation.js";
 
 const router = express.Router();
 
 router.post("/signup", async (req, res) => {
-  const { firstname, lastname, email, password } = req.body;
+  // const { firstname, lastname, email, password } = req.body;
+
+  // ? Zod Validation
+  const validationResult = await signupPostRequestBodySchema.safeParseAsync(
+    req.body,
+  );
+
+  if (validationResult.error) {
+    return res.status(400).json({
+      error: validationResult.error.format(),
+    });
+  }
+
+  const { firstname, lastname, email, password } = validationResult.data;
 
   const [existingUser] = await db
     .select({
