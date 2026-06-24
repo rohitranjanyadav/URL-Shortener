@@ -49,7 +49,7 @@ router.get("/:shortCode", async function (req, res) {
       targetURL: urlsTable.targetURL,
     })
     .from(urlsTable)
-    .where(eq(urlsTable.shortCode, shortCode));
+    .where(eq(urlsTable.shortCode, code));
 
   if (!result) {
     return res.status(404).json({ error: "Invalid URL" });
