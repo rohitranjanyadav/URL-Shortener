@@ -4,6 +4,7 @@ import { shortenPostRequestBodySchema } from "../validation/req.validation.js";
 import { db } from "../db/index.js";
 import { urlsTable } from "../models/url.model.js";
 import { ensureAuthenticated } from "../middleware/auth.middleware.js";
+import { eq } from "drizzle-orm";
 
 const router = express.Router();
 
@@ -38,6 +39,23 @@ router.post("/shorten", ensureAuthenticated, async function (req, res) {
     shortCode: result.shortCode,
     targetURL: result.targetURL,
   });
+});
+
+router.get("/:shortCode", async function (req, res) {
+  const code = req.params.shortCode;
+
+  const [result] = await db
+    .select({
+      targetURL: urlsTable.targetURL,
+    })
+    .from(urlsTable)
+    .where(eq(urlsTable.shortCode, shortCode));
+
+  if (!result) {
+    return res.status(404).json({ error: "Invalid URL" });
+  }
+
+  return res.redirect(result.targetURL);
 });
 
 export default router;

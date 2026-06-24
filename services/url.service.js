@@ -1,4 +1,4 @@
-// Refactor-Create function for inserting URL in DB
+// Refactor-Create function for inserting,getting URL in DB(All dbs)
 // const [result] = await db
 //     .insert(urlsTable)
 //     .values({
